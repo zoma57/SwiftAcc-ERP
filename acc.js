@@ -7,6 +7,7 @@ const setData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 // ==========================================
 // 2. إدارة الحسابات
 // ==========================================
+
 function saveAccount() {
     const code = document.getElementById('accCode').value.trim();
     const name = document.getElementById('accName').value.trim();
@@ -14,16 +15,50 @@ function saveAccount() {
     const opDebit = parseFloat(document.getElementById('opDebit').value) || 0;
     const opCredit = parseFloat(document.getElementById('opCredit').value) || 0;
 
-    if (!code || !name) return alert('Please enter Account Code and Name!');
+    if (!code || !name) return alert('الرجاء إدخال كود واسم الحساب!');
+    if (!/^\d+$/.test(code)) return alert('❌ خطأ: كود الحساب يجب أن يتكون من أرقام فقط!');
 
     let accounts = getData('accountsData');
-    let existingIndex = accounts.findIndex(a => a.code.toString() === code.toString());
 
-    let badge = 'badge-equity';
-    if (type === 'ASSET') badge = 'badge-asset';
-    else if (type === 'LIABILITY') badge = 'badge-equity';
-    else if (type === 'REVENUE') badge = 'badge-revenue';
-    else if (type === 'EXPENSE') badge = 'badge-expense';
+    // ==========================================
+    // الضابط المحاسبي: التحقق من "النمط" والتسلسل (Pattern Validation)
+    // ==========================================
+    if (code.length > 1) {
+        let parentExists = false;
+        
+        // بنفتش في الأكواد الموجودة: هل فيه كود بيمثل "بداية" الكود الجديد؟
+        // مثلاً لو بنضيف 101001، بنشوف هل فيه 10100 أو 1010 أو 101 أو 10 أو 1؟
+        for (let i = code.length - 1; i >= 1; i--) {
+            let potentialParent = code.substring(0, i);
+            if (accounts.some(a => a.code.toString() === potentialParent)) {
+                parentExists = true;
+                break;
+            }
+        }
+
+        if (!parentExists) {
+            return alert(`❌ خطأ في هيكل الشجرة:\nالكود [${code}] لا ينتمي لأي حساب أب موجود حالياً.\nيجب إضافة الحساب الرئيسي أولاً (مثلاً كود يبدأ بـ ${code.substring(0, code.length - 1)}).`);
+        }
+    } else {
+        // لو الكود طوله 1 (يعني حساب رئيسي زي 1، 2، 3، 4، 5)
+        const rootCodes = ['1', '2', '3', '4', '5'];
+        if (!rootCodes.includes(code)) {
+            return alert('❌ الأكواد الرئيسية يجب أن تبدأ بالأرقام المعيارية (1 للأصول، 2 للخصوم، إلخ).');
+        }
+    }
+
+    // --- التحقق من النوع (الاسكيمة) ---
+    let parents = accounts.filter(a => code.startsWith(a.code.toString()) && a.code.toString() !== code.toString());
+    if (parents.length > 0) {
+        parents.sort((a, b) => b.code.toString().length - a.code.toString().length);
+        let directParent = parents[0];
+        if (directParent.type !== type) {
+            return alert(`❌ تضارب في النوع:\nالحساب الأب "${directParent.name}" نوعه (${directParent.type}).\nلا يمكن إضافة حساب ابن بنوع مختلف!`);
+        }
+    }
+
+    let existingIndex = accounts.findIndex(a => a.code.toString() === code.toString());
+    let badge = type === 'ASSET' ? 'badge-asset' : (type === 'REVENUE' ? 'badge-revenue' : (type === 'EXPENSE' ? 'badge-expense' : 'badge-equity'));
 
     let newAcc = { code, name, type, badgeClass: badge, opDebit, opCredit };
 
@@ -32,6 +67,7 @@ function saveAccount() {
 
     setData('accountsData', accounts);
     
+    // تنظيف الحقول
     document.getElementById('accCode').value = '';
     document.getElementById('accName').value = '';
     document.getElementById('opDebit').value = '0.00';
@@ -83,9 +119,33 @@ function editAccount(codeToEdit) {
 }
 
 function deleteAcc(code) {
-    if (confirm('Are you sure you want to delete this account?')) {
-        let accounts = getData('accountsData');
-        accounts = accounts.filter(a => a.code.toString().trim() !== code.toString().trim());
+    let accounts = getData('accountsData');
+    let entries = getData('journalData'); // جبنا القيود عشان نفتش فيها
+    
+    // --- تأمين 3 (المعدل): منع الحذف فقط إذا كان الحساب أو فروعه مستخدمين في القيود ---
+    let isUsedInJournal = false;
+    
+    // بنلف على كل القيود اللي متسجلة
+    entries.forEach(entry => {
+        if(entry.lines) {
+            entry.lines.forEach(line => {
+                // لو لقينا سطر في القيد بيستخدم الكود ده أو أي كود بيبدأ بيه (يعني فروعه)
+                if(line.code.toString().startsWith(code.toString())) {
+                    isUsedInJournal = true;
+                }
+            });
+        }
+    });
+    
+    if (isUsedInJournal) {
+        // لو مستخدم في قيد، السيستم يرفض الحذف
+        return alert(`❌ حماية النظام: لا يمكن حذف الحساب [${code}]!\nهذا الحساب (أو أحد حساباته الفرعية) تم استخدامه بالفعل في قيود اليومية.\nالرجاء حذف القيود المرتبطة به أولاً.`);
+    }
+
+    // لو معلهوش أي قيود، هيسألك تتأكد من الحذف
+    if (confirm('هل أنت متأكد من حذف هذا الحساب نهائياً؟ (سيتم حذف أي حسابات فرعية فارغة تابعة له أيضاً)')) {
+        // بنمسح الحساب الأب وكل عياله (الفروع) في خبطة واحدة طالما كلهم فاضيين ومعليهموش قيود
+        accounts = accounts.filter(a => !a.code.toString().startsWith(code.toString()));
         setData('accountsData', accounts);
         displayAccounts();
     }
