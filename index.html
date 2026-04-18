@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal Entry - SwiftAcc</title>
+    <link rel="stylesheet" href="acc.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="brand"><i class="fas fa-university"></i> SwiftAcc</div>
+        <a href="index.html" class="nav-link active"><i class="fas fa-edit"></i> Journal Entry</a>
+        <a href="Trial Balance.html" class="nav-link"><i class="fas fa-balance-scale"></i> Trial Balance</a>
+        <a href="Income Statement.html" class="nav-link"><i class="fas fa-chart-line"></i> Income Statement</a>
+        <a href="Balance.html" class="nav-link"><i class="fas fa-file-invoice-dollar"></i> Balance Sheet</a>
+        <a href="Accounts.html" class="nav-link"><i class="fas fa-hashtag"></i> Accounts Codes</a>
+    </div>
+
+    <div class="main-content">
+        <p style="color: #a2a3b7; margin-bottom: 5px; font-weight: 600; font-size: 13px; letter-spacing: 1px;">GENERAL LEDGER</p>
+        <h1 style="margin-top: 0; color: #1e1e2d; font-size: 38px;">Journal Entry</h1>
+        
+        <datalist id="accountsList"></datalist>
+
+        <div class="journal-header">
+            <div style="flex: 1;">
+                <label style="font-weight: bold; color: #5e6278; font-size: 13px;">DATE</label>
+                <input type="date" id="jDate" class="form-input" style="margin-top: 8px;">
+            </div>
+            <div style="flex: 3;">
+                <label style="font-weight: bold; color: #5e6278; font-size: 13px;">DESCRIPTION</label>
+                <input type="text" id="jDesc" class="form-input" placeholder="Journal explanation..." style="margin-top: 8px;">
+            </div>
+        </div>
+
+        <div class="glass-card" style="padding: 0; overflow: hidden;">
+            <table class="data-table" style="margin-top: 0;">
+                <thead style="background: #1e1e2d;">
+                    <tr>
+                        <th style="color: rgb(0, 0, 0); width: 20%;">ACCOUNT CODE</th>
+                        <th style="color: rgb(0, 0, 0); width: 30%;">ACCOUNT NAME</th>
+                        <th style="color: rgb(0, 0, 0); width: 15%;">TYPE</th>
+                        <th style="color: rgb(0, 0, 0); width: 17.5%;">DEBIT</th>
+                        <th style="color: rgb(0, 0, 0); width: 17.5%;">CREDIT</th>
+                    </tr>
+                </thead>
+                <tbody id="journalBody">
+                    <tr>
+                        <td><input type="text" list="accountsList" class="form-input code-input" placeholder="e.g. 101001" oninput="fetchAcc(this)"></td>
+                        <td><input type="text" class="form-input name-input" placeholder="Account Name" readonly></td>
+                        <td><input type="text" class="form-input type-input" placeholder="Type" readonly></td>
+                        <td><input type="number" class="form-input debit-input" value="0.00" min="0" oninput="calcTotals()"></td>
+                        <td><input type="number" class="form-input credit-input" value="0.00" min="0" oninput="calcTotals()"></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="padding: 20px;">
+                <button class="btn-add" onclick="addJournalLine()"><i class="fas fa-plus"></i> Add Line</button>
+                
+                <div class="totals-box">
+                    <div>Total Debits: <span id="totDebit" style="color: #1bc5bd;">$0.00</span></div>
+                    <div>Total Credits: <span id="totCredit" style="color: #f64e60;">$0.00</span></div>
+                    <div id="statusIndicator" style="color: #a2a3b7;">Status: <span>Pending</span></div>
+                </div>
+
+<div id="saveErrorMsg" style="display: none; background: #ffe2e5; color: #f64e60; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; border: 1px solid #f64e60;">
+                    <i class="fas fa-exclamation-triangle"></i> Error: Cannot save entry! Please ensure the entry is balanced (Total Debits = Total Credits) and amounts are greater than zero.
+                </div>
+
+                <button class="btn-save" onclick="saveJournal()"><i class="fas fa-check-circle"></i> Validate & Add</button>
+            </div>
+        </div>
+
+        <div class="saved-title"><i class="fas fa-history"></i> Saved Journal Entries</div>
+        <div class="glass-card" style="padding: 0; overflow: hidden;">
+            <table class="data-table" style="margin-top: 0;">
+                <thead style="background: #f8f9fb;">
+                    <tr>
+                        <th width="15%">DATE</th>
+                        <th width="35%">DESCRIPTION</th>
+                        <th width="15%">TOTAL DEBIT</th>
+                        <th width="15%">TOTAL CREDIT</th>
+                        <th width="20%">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody id="savedEntriesBody">
+                    </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script src="acc.js"></script>
+    <script>
+        document.getElementById('jDate').valueAsDate = new Date();
+    </script>
+</body>
+</html>
