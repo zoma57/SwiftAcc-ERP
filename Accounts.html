@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts & Balances - SwiftAcc</title>
+    <link rel="stylesheet" href="acc.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="brand"><i class="fas fa-university"></i> SwiftAcc</div>
+        <a href="acc.html" class="nav-link"><i class="fas fa-edit"></i> Journal Entry</a>
+        <a href="Trial Balance.html" class="nav-link"><i class="fas fa-balance-scale"></i> Trial Balance</a>
+        <a href="Income Statement.html" class="nav-link"><i class="fas fa-chart-line"></i> Income Statement</a>
+        <a href="Balance.html" class="nav-link"><i class="fas fa-file-invoice-dollar"></i> Balance Sheet</a>
+        <a href="Accounts.html" class="nav-link active"><i class="fas fa-hashtag"></i> Accounts Codes</a>
+    </div>
+
+    <div class="main-content">
+        <p style="color: #a2a3b7; margin-bottom: 5px; font-weight: 600; font-size: 13px; letter-spacing: 1px;">SYSTEM CONFIGURATION</p>
+        <h1 style="margin-top: 0; color: #1e1e2d; font-size: 38px;">Chart of Accounts & Beginning Balances</h1>
+
+        <div class="glass-card">
+            <h3 style="margin-top: 0; color: #3f4254; border-bottom: 1px solid #ebedf3; padding-bottom: 10px;">Add / Edit Account (إضافة وتعديل حساب)</h3>
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; font-size: 12px;">ACCOUNT CODE</label>
+                    <input type="text" id="accCode" class="form-input" placeholder="e.g. 101001">
+                </div>
+                <div style="flex: 2;">
+                    <label style="font-weight: bold; font-size: 12px;">ACCOUNT NAME</label>
+                    <input type="text" id="accName" class="form-input" placeholder="Account Name">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; font-size: 12px;">TYPE</label>
+                    <select id="accType" class="form-input">
+                        <option value="ASSET">Asset (أصول)</option>
+                        <option value="LIABILITY">Liability (خصوم)</option>
+                        <option value="EQUITY">Equity (حقوق ملكية)</option>
+                        <option value="REVENUE">Revenue (إيرادات)</option>
+                        <option value="EXPENSE">Expense (مصروفات)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; font-size: 12px; color: #1bc5bd;">BEG. DEBIT (مدين أول المدة)</label>
+                    <input type="number" id="opDebit" class="form-input" value="0.00" min="0">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-weight: bold; font-size: 12px; color: #f64e60;">BEG. CREDIT (دائن أول المدة)</label>
+                    <input type="number" id="opCredit" class="form-input" value="0.00" min="0">
+                </div>
+            </div>
+            
+            <button class="btn-save" style="margin-top: 0;" onclick="saveAccount()"><i class="fas fa-save"></i> Save Account</button>
+        </div>
+
+        <div style="background: #f8f9fb; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; border: 1px solid #ebedf3;">
+            <input type="file" id="csvFileInput" accept=".csv" style="padding: 8px; flex: 1;">
+            <button onclick="processCSV()" style="background: #1e1e2d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;"><i class="fas fa-file-import"></i> Import CSV</button>
+        </div>
+
+        <div class="glass-card" style="padding: 0; overflow: hidden;">
+            <table class="data-table" style="margin-top: 0;">
+                <thead style="background: #ebedf3;">
+                    <tr>
+                        <th style="color: #000; font-weight: 900;">CODE</th>
+                        <th style="color: #000; font-weight: 900;">ACCOUNT NAME</th>
+                        <th style="color: #000; font-weight: 900;">TYPE</th>
+                        <th style="color: #000; font-weight: 900;">BEG. DEBIT</th>
+                        <th style="color: #000; font-weight: 900;">BEG. CREDIT</th>
+                        <th style="color: #000; font-weight: 900; text-align: center;">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="accountsBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="acc.js"></script>
+</body>
+</html>

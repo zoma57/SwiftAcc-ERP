@@ -1,0 +1,89 @@
+// 1. حساب الإجماليات والتأكد من التوازن
+function calculateTotals() {
+    let totalDebit = 0;
+    let totalCredit = 0;
+
+    document.querySelectorAll('.debit-input').forEach(input => {
+        totalDebit += parseFloat(input.value) || 0;
+    });
+
+    document.querySelectorAll('.credit-input').forEach(input => {
+        totalCredit += parseFloat(input.value) || 0;
+    });
+
+    const debitDisplay = document.getElementById('total-debit-display');
+    const creditDisplay = document.getElementById('total-credit-display');
+    const statusText = document.getElementById('balance-status');
+    const submitBtn = document.getElementById('submit-btn');
+
+    debitDisplay.innerText = totalDebit.toFixed(2);
+    creditDisplay.innerText = totalCredit.toFixed(2);
+
+    if (totalDebit === totalCredit && totalDebit > 0) {
+        statusText.innerText = "Balanced ✓";
+        statusText.className = "status-balanced";
+        submitBtn.style.background = "#1e293b";
+    } else {
+        statusText.innerText = "Unbalanced ✗";
+        statusText.className = "status-error";
+        submitBtn.style.background = "#ef4444";
+    }
+}
+
+// 2. إضافة سطر جديد في الـ Journal
+document.getElementById('add-line').addEventListener('click', function() {
+    const container = document.getElementById('entry-lines');
+    const row = document.createElement('div');
+    row.className = 'entry-row row';
+    row.innerHTML = `
+        <div class="input-group"><input type="text" placeholder="Code"></div>
+        <div class="input-group"><input type="text" placeholder="Account Name"></div>
+        <div class="input-group"><input type="text" placeholder="Type"></div>
+        <div class="input-group sm"><input type="number" class="debit-input" value="0.00"></div>
+        <div class="input-group sm"><input type="number" class="credit-input" value="0.00"></div>
+    `;
+    container.appendChild(row);
+    
+    // ربط الحسابات بالسطر الجديد
+    row.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', calculateTotals);
+    });
+});
+
+// 3. نقل البيانات لجدول المعاينة عند الضغط على Validate
+document.getElementById('submit-btn').addEventListener('click', function() {
+    const date = document.getElementById('entry-date').value;
+    const rows = document.querySelectorAll('.entry-row');
+    const previewTableBody = document.querySelector('#main-preview-table tbody');
+
+    // التأكد من التوازن قبل الإضافة
+    let dTotal = parseFloat(document.getElementById('total-debit-display').innerText);
+    let cTotal = parseFloat(document.getElementById('total-credit-display').innerText);
+
+    if (dTotal !== cTotal || dTotal === 0) {
+        alert("The entry must be balanced and not zero before adding to preview.");
+        return;
+    }
+
+    // إضافة كل سطر للجدول
+    rows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${date || '-'}</td>
+            <td>${inputs[0].value}</td>
+            <td>${inputs[1].value}</td>
+            <td>${inputs[2].value}</td>
+            <td style="color: #10b981; font-weight: bold;">${parseFloat(inputs[3].value).toFixed(2)}</td>
+            <td style="color: #ef4444; font-weight: bold;">${parseFloat(inputs[4].value).toFixed(2)}</td>
+        `;
+        previewTableBody.appendChild(newRow);
+    });
+
+    alert("Entry Added to Preview Successfully!");
+});
+
+// تفعيل الحسابات لأول سطر عند تحميل الصفحة
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('input', calculateTotals);
+});

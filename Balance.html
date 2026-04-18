@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance Sheet - SwiftAcc</title>
+    <link rel="stylesheet" href="acc.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand"><i class="fas fa-university"></i> SwiftAcc</div>
+        <a href="acc.html" class="nav-link"><i class="fas fa-edit"></i> Journal Entry</a>
+        <a href="Trial Balance.html" class="nav-link"><i class="fas fa-balance-scale"></i> Trial Balance</a>
+        <a href="Income Statement.html" class="nav-link"><i class="fas fa-chart-line"></i> Income Statement</a>
+        <a href="Balance.html" class="nav-link active"><i class="fas fa-file-invoice-dollar"></i> Balance Sheet</a>
+        <a href="Accounts.html" class="nav-link"><i class="fas fa-hashtag"></i> Accounts Codes</a>
+    </div>
+
+    <div class="main-content">
+        <div class="dashboard-header">
+            <div>
+                <p style="color: #a2a3b7; margin-bottom: 5px; font-weight: 800; font-size: 12px; letter-spacing: 2px;">FINANCIAL POSITION</p>
+                <h1 style="margin: 0; color: #1e1e2d; font-size: 38px; font-weight: 900;">Balance Sheet</h1>
+                <p style="color: #7e8299; margin: 8px 0 0 0; font-weight: 600;">Snapshot of Assets, Liabilities, and Equity.</p>
+            </div>
+            <div class="action-buttons">
+                <button class="btn-outline" onclick="window.print()"><i class="fas fa-print"></i> Print Statement</button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <div class="glass-card" style="border-top: 5px solid #1bc5bd;">
+                <h3 style="color: #1e1e2d; font-size: 22px; border-bottom: 2px solid #ebedf3; padding-bottom: 15px; margin-top: 0;"><i class="fas fa-building" style="color: #1bc5bd;"></i> Assets (الأصول)</h3>
+                <div id="bsAssets" style="min-height: 200px;"></div>
+                
+                <div style="display: flex; justify-content: space-between; padding: 20px; font-weight: 900; font-size: 18px; background: #1bc5bd; color: white; border-radius: 8px; margin-top: 20px; box-shadow: 0 5px 15px rgba(27,197,189,0.3);">
+                    <span>Total Assets</span><span id="totAst">$0.00</span>
+                </div>
+            </div>
+
+            <div class="glass-card" style="border-top: 5px solid #5d78ff;">
+                <h3 style="color: #1e1e2d; font-size: 22px; border-bottom: 2px solid #ebedf3; padding-bottom: 15px; margin-top: 0;"><i class="fas fa-handshake" style="color: #f64e60;"></i> Liabilities (الخصوم)</h3>
+                <div id="bsLiab"></div>
+                
+                <h3 style="color: #1e1e2d; font-size: 22px; border-bottom: 2px solid #ebedf3; padding-bottom: 15px; margin-top: 40px;"><i class="fas fa-chart-pie" style="color: #5d78ff;"></i> Equity (حقوق الملكية)</h3>
+                <div id="bsEq"></div>
+
+                <div style="display: flex; justify-content: space-between; padding: 20px; font-weight: 900; font-size: 18px; background: #1e1e2d; color: white; border-radius: 8px; margin-top: 20px; box-shadow: 0 5px 15px rgba(30,30,45,0.3);">
+                    <span>Total Liab & Equity</span><span id="totLiabEq">$0.00</span>
+                </div>
+            </div>
+        </div>
+        <div class="watermark">SwiftAcc© 2026 • Confidential Financial Data</div>
+    </div>
+    <script src="acc.js"></script>
+</body>
+</html>
