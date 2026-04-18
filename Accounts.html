@@ -45,16 +45,16 @@
                 </div>
             </div>
             
-            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                <div style="flex: 1;">
-                    <label style="font-weight: bold; font-size: 12px; color: #1bc5bd;">BEG. DEBIT (مدين أول المدة)</label>
-                    <input type="number" id="opDebit" class="form-input" value="0.00" min="0">
-                </div>
-                <div style="flex: 1;">
-                    <label style="font-weight: bold; font-size: 12px; color: #f64e60;">BEG. CREDIT (دائن أول المدة)</label>
-                    <input type="number" id="opCredit" class="form-input" value="0.00" min="0">
-                </div>
-            </div>
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; width: 100%;">
+    <div style="flex: 1;">
+        <label style="font-size: 11px; font-weight: 800; color: var(--text-gray); margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 1px;">BEG. DEBIT (مدين أول المدة)</label>
+        <input type="number" id="opDebit" class="form-input" placeholder="0.00" value="0">
+    </div>
+    <div style="flex: 1;">
+        <label style="font-size: 11px; font-weight: 800; color: var(--text-gray); margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 1px;">BEG. CREDIT (دائن أول المدة)</label>
+        <input type="number" id="opCredit" class="form-input" placeholder="0.00" value="0">
+    </div>
+</div>
             
             <button class="btn-save" style="margin-top: 0;" onclick="saveAccount()"><i class="fas fa-save"></i> Save Account</button>
         </div>
